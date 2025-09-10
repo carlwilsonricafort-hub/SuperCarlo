@@ -1,0 +1,77 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: sans-serif;
+  }
+  
+  body {
+            background: linear-gradient(135deg, #ff9a9e, #fecfef, #fecfef, #ff9a9e);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+  
+  .container {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    gap: 20px;
+    max-width: 500px;
+    margin: 20px;
+  }
+  
+  .container .tenor-gif-embed {
+    max-width: 200px;
+  }
+  
+  .container .btn {
+    display: flex;
+    gap: 25px;
+  }
+  
+  .btn a {
+  text-decoration: none;
+  color: rgb(0, 0, 0);
+  font-size: 0.9rem;
+  font-weight: bold;
+  padding: 12px 30px;
+  border-radius: 50px;
+  border: 2px solid black;
+
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.btn a:hover {
+  background: linear-gradient(135deg, #ff1f4b, #ff4d6d);
+  transform: scale(1.1); /* grow slightly */
+}
+
+
+ h1 {
+  font-family: "Dancing Script", cursive;
+  font-size: 5rem;
+  color: #ff4d6d;
+  margin-top: 20px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+
+  h2 {
+    font-family: "Brush Script MT", cursive;
+    color: #000000;
+}
+p {
+  font-family:"Georgia";
+  font-size: 1rem;
+  color: #222;
+}
+
+

@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual Flowers for You</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #ff9a9e, #fecfef, #fecfef, #ff9a9e);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            align-items: center;
+            gap: 20px;
+            max-width: 800px;
+            margin: 20px;
+        }
+        
+        h1 {
+            font-family: "Dancing Script", cursive;
+            font-size: 3rem;
+            color: #ff4d6d;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            animation: fadeInDown 1s ease;
+        }
+        
+        .bouquet-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            height: 500px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+        
+        .bouquet-card {
+            position: relative;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .bouquet {
+            position: relative;
+            width: 300px;
+            height: 350px;
+        }
+        
+        .wrapper {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 250px;
+            background: linear-gradient(135deg, #ff4d6d, #ff1f4b);
+            clip-path: polygon(20% 100%, 80% 100%, 90% 30%, 10% 30%);
+            z-index: 1;
+        }
+        
+        .ribbon {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 40px;
+            background: #ff69b4;
+            z-index: 2;
+        }
+        
+        .ribbon::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 20px solid transparent;
+            border-bottom: 20px solid transparent;
+            border-right: 30px solid #ff69b4;
+        }
+        
+        .ribbon::after {
+            content: '';
+            position: absolute;
+            right: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 20px solid transparent;
+            border-bottom: 20px solid transparent;
+            border-left: 30px solid #ff69b4;
+        }
+        
+        .tulips-container {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 250px;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 10px;
+        }
+        
+        .tulip {
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            animation: sway 3s ease-in-out infinite;
+        }
+        
+        .tulip:hover {
+            transform: scale(1.1) translateY(-10px);
+        }
+        
+        .tulip:nth-child(odd) {
+            animation-delay: 0.5s;
+        }
+        
+        .tulip:nth-child(even) {
+            animation-delay: 1s;
+        }
+        
+        .tulip-head {
+            width: 35px;
+            height: 40px;
+            background: linear-gradient(135deg, #ff6b6b, #ff4757);
+            border-radius: 0 50% 50% 50%;
+            transform: rotate(45deg);
+            position: relative;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+        }
+        
+        .tulip-stem {
+            width: 3px;
+            height: 60px;
+            background: linear-gradient(to bottom, #4a7c59, #2d5a3d);
+            position: absolute;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .tulip-leaf {
+            position: absolute;
+            width: 15px;
+            height: 25px;
+            background: #4a7c59;
+            border-radius: 0 100% 0 100%;
+            bottom: -40px;
+            left: -10px;
+        }
+        
+        .message-bubble {
+            position: absolute;
+            background: white;
+            padding: 10px 15px;
+            border-radius: 20px;
+            border: 2px solid #ff69b4;
+            font-size: 0.8rem;
+            font-family: "Comic Sans MS", cursive;
+            color: #333;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            white-space: nowrap;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            z-index: 10;
+        }
+        
+        .message-bubble.show {
+            opacity: 1;
+        }
+        
+        /* Position messages around the bouquet */
+        .message-1 { top: -50px; left: -180px; }
+        .message-2 { top: -30px; right: -200px; }
+        .message-3 { top: 50px; left: -220px; }
+        .message-4 { top: 80px; right: -230px; }
+        .message-5 { top: 140px; left: -200px; }
+        .message-6 { top: 170px; right: -210px; }
+        .message-7 { bottom: 80px; left: -180px; }
+        .message-8 { bottom: 50px; right: -200px; }
+        .message-9 { bottom: 120px; left: 50%; transform: translateX(-50%); }
+        
+        .label {
+            position: absolute;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 8px 20px;
+            border-radius: 10px;
+            font-family: "Dancing Script", cursive;
+            font-size: 1.2rem;
+            color: #ff4d6d;
+            z-index: 3;
+        }
+        
+        .btn {
+            display: flex;
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .btn a {
+            text-decoration: none;
+            color: rgb(0, 0, 0);
+            font-size: 0.9rem;
+            font-weight: bold;
+            padding: 12px 30px;
+            border-radius: 50px;
+            border: 2px solid black;
+            background: white;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .btn a:hover {
+            background: linear-gradient(135deg, #ff1f4b, #ff4d6d);
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .instruction {
+            font-family: "Georgia", serif;
+            font-size: 1rem;
+            color: #555;
+            margin-top: 20px;
+            font-style: italic;
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        
+        @keyframes sway {
+            0%, 100% {
+                transform: rotate(-2deg);
+            }
+            50% {
+                transform: rotate(2deg);
+            }
+        }
+        
+        /* Responsive design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .bouquet-wrapper {
+                height: 400px;
+            }
+            
+            .message-bubble {
+                font-size: 0.7rem;
+                padding: 8px 12px;
+            }
+            
+            .message-1, .message-3, .message-5, .message-7 {
+                left: -150px;
+            }
+            
+            .message-2, .message-4, .message-6, .message-8 {
+                right: -150px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .message-bubble {
+                display: none;
+            }
+            
+            .mobile-messages {
+                display: block;
+                margin-top: 20px;
+                padding: 20px;
+                background: white;
+                border-radius: 15px;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            }
+            
+            .mobile-messages p {
+                margin: 10px 0;
+                color: #ff4d6d;
+                font-family: "Comic Sans MS", cursive;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (min-width: 481px) {
+            .mobile-messages {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Virtual Flowers</h1>
+        
+        <div class="bouquet-wrapper">
+            <div class="bouquet-card">
+                <div class="bouquet">
+                    <div class="wrapper"></div>
+                    <div class="ribbon"></div>
+                    <div class="tulips-container">
+                        <div class="tulip" data-message="1">
+                            <div class="tulip-head"></div>
+                            <div class="tulip-stem"></div>
+                            <div class="tulip-leaf"></div>
+                        </div>
+                        <div class="tulip" data-message="2">
+                            <div class="tulip-head"></div>
+                            <div class="tulip-stem"></div>
+                        </div>
+                        <div class="tulip" data-message="3">
+                            <div class="tulip-head"></div>
+                            <div class="tulip-stem"></div>
+                            <div class="tulip-leaf"></div>
+                        </div>
+                        <div class="tulip" data-message="4">
+                            <div class="tulip-head"></div>
+                            <div class="tulip-stem"></div>
+                        </div>
+                        <div class="tulip" data-message="5">
+                            <div class="tulip-head"></div>
+                            <div class="tulip-stem"></div>
+                            <div class="tulip-leaf"></div>
+                        </div>
+                        <div class="tulip" data-message="6">
+                            <div class="tulip-head"></div>
+                            <div class="tulip-stem"></div>
+                        </div>
+                        <div class="tulip" data-message="7">
+                            <div class="tulip-head"></div>
+                            <div class="tulip-stem"></div>
+                            <div class="tulip-leaf"></div>
+                        </div>
+                        <div class="tulip" data-message="8">
+                            <div class="tulip-head"></div>
+                            <div class="tulip-stem"></div>
+                        </div>
+                        <div class="tulip" data-message="9">
+                            <div class="tulip-head"></div>
+                            <div class="tulip-stem"></div>
+                            <div class="tulip-leaf"></div>
+                        </div>
+                    </div>
+                    <div class="label">TUL-ips for you!</div>
+                    
+                    <!-- Message bubbles -->
+                    <div class="message-bubble message-1">Love is beautiful & powerful, just like you!</div>
+                    <div class="message-bubble message-2">Bringing love with all my heart, receiving is surprise bouquet!</div>
+                    <div class="message-bubble message-3">Without you life isn't the same, things just fall in thanks!</div>
+                    <div class="message-bubble message-4">Hope this flowers can make everything around you more colorful!</div>
+                    <div class="message-bubble message-5">The sunshine is for my day, just like you're my shining happiness!</div>
+                    <div class="message-bubble message-6">Your presence is as comforting as finding a warm bouquet idea!</div>
+                    <div class="message-bubble message-7">The blooming message can tell you of happy we can be every day!</div>
+                    <div class="message-bubble message-8">You bring color to life the way flowers bring color to the world!</div>
+                    <div class="message-bubble message-9">You're as special and graceful as a tulip dancing in the breeze!</div>
+                </div>
+            </div>
+        </div>
+        
+        <p class="instruction">✨ Hover over each tulip to see a special message! ✨</p>
+        
+        <!-- Mobile messages (shown only on small screens) -->
+        <div class="mobile-messages">
+            <p>💕 Love is beautiful & powerful!</p>
+            <p>💕 Bringing love with all my heart!</p>
+            <p>💕 You make everything colorful!</p>
+            <p>💕 You're my shining happiness!</p>
+            <p>💕 You bring color to life!</p>
+        </div>
+        
+        <div class="btn">
+            <a href="gifts.html">RETURN</a>
+        </div>
+    </div>
+    
+    <script>
+        // Show messages on hover
+        const tulips = document.querySelectorAll('.tulip');
+        const messages = document.querySelectorAll('.message-bubble');
+        
+        tulips.forEach((tulip, index) => {
+            tulip.addEventListener('mouseenter', () => {
+                messages[index].classList.add('show');
+            });
+            
+            tulip.addEventListener('mouseleave', () => {
+                messages[index].classList.remove('show');
+            });
+            
+            // Touch support for mobile
+            tulip.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                messages.forEach(msg => msg.classList.remove('show'));
+                messages[index].classList.add('show');
+                
+                setTimeout(() => {
+                    messages[index].classList.remove('show');
+                }, 3000);
+            });
+        });
+        
+        // Add sparkle effect on click
+        tulips.forEach(tulip => {
+            tulip.addEventListener('click', function() {
+                this.style.animation = 'none';
+                setTimeout(() => {
+                    this.style.animation = '';
+                }, 10);
+            });
+        });
+    </script>
+</body>
+</html>
